@@ -1,3 +1,4 @@
+import requests
 import streamlit as st
 import polars as pl
 import pandas as pd
@@ -23,6 +24,28 @@ These results are based on cleaned and validated trip records.
 # -----------------------------------------------------------------------------------------------------------
 # Data Loading with Caching (Optimized for Streamlit)
 # -----------------------------------------------------------------------------------------------------------
+raw_data_path = Path("data/raw")
+raw_data_path.mkdir(parents=True, exist_ok=True)
+
+# URLs
+trip_url = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet"
+zone_url = "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv"
+
+trip_file = raw_data_path / "yellow_tripdata_2024_01.parquet"
+zone_file = raw_data_path / "taxi_zone_lookup.csv"
+
+def download_file(url, destination):
+    if not destination.exists():
+        response = requests.get(url, stream=True)
+        if response.status_code != 200:
+            raise Exception(f"Failed to download {url}")
+        with open(destination, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        print(f"Downloaded: {destination}")
+    else:
+        print(f"File already exists: {destination}")
+
 
 @st.cache_data
 def load_data():
@@ -31,9 +54,14 @@ def load_data():
     Uses Polars lazy mode so we don’t load millions of rows into memory at once.
     The function is cached so Streamlit does not reload the dataset on every interaction.
     """
-    
-    data_path = "data/raw/yellow_tripdata_2024_01.parquet"
-    zone_path = "data/raw/taxi_zone_lookup.csv"
+     # Download data if missing
+    download_file(trip_url, trip_file)
+    download_file(zone_url, zone_file)
+
+    data_path = trip_file
+    zone_path = zone_file
+    #data_path = "data/raw/yellow_tripdata_2024_01.parquet"
+    #zone_path = "data/raw/taxi_zone_lookup.csv"
 
     # I Used scan_parquet (Lazy Mode) to prevent memory crashes that occurred 
     # This keeps the millions of rows on disk until we filter them

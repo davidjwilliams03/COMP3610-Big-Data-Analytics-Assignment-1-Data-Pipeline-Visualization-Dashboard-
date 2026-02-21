@@ -32,20 +32,20 @@ Records processed:
 
 ---
 
-## Project Structure
+## Project Structure  
 
-project/
-│
-├── assignment1.ipynb # Main notebook (Parts 1–3)
-├── app.py # Streamlit dashboard
-├── data/
-│ └── raw/
-│ ├── yellow_tripdata_2024_01.parquet
-│ └── taxi_zone_lookup.csv
-├── requirements.txt
-├── README.md
-└── .gitignore
-
+project/  
+│  
+├── assignment1.ipynb # Main notebook (Parts 1–3)  
+├── app.py # Streamlit dashboard  
+├── data/  
+│ └── raw/  
+│ ├── yellow_tripdata_2024_01.parquet  
+│ └── taxi_zone_lookup.csv  
+├── requirements.txt  
+├── README.md  
+└── .gitignore  
+  
 ---
 
 ## Part 1 – Data Ingestion & Validation
